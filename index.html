@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Dopamine Color Palette */
+      --primary: #6200EA;    /* Deep Purple */
+      --secondary: #FF007F;  /* Fuchsia Pink */
+      --accent: #00E676;     /* Neon Green */
+      --bg-gradient: linear-gradient(135deg, #6200EA 0%, #FF007F 100%);
+      --card-bg: rgba(255, 255, 255, 0.95);
+      --text-main: #1A1A1A;
+      --text-muted: #757575;
+      --border-color: #E0E0E0;
+    }
+
+    /*Entrance Animation */
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Gradient Border Animation for Button */
+    @keyframes gradientBorder {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Loading Spinner Animation */
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    body { 
+      font-family: 'Prompt', sans-serif; 
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      overflow-x: hidden;
+    }
+
+    .container { 
+      width: 100%;
+      max-width: 480px; 
+      background: var(--card-bg); 
+      padding: 40px; 
+      border-radius: 30px; 
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); 
+      backdrop-filter: blur(10px); /* Glassmorphism */
+      animation: fadeInDown 0.6s ease-out;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    /* Decoration Circle */
+    .container::before {
+      content: '';
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      width: 100px;
+      height: 100px;
+      background: rgba(255, 0, 127, 0.1);
+      border-radius: 50%;
+      z-index: 0;
+    }
+
+    h2 { 
+      text-align: center; 
+      margin-top: 0;
+      margin-bottom: 30px; 
+      font-size: 28px; 
+      font-weight: 600;
+      background: linear-gradient(45deg, #6200EA, #FF007F);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      position: relative;
+      z-index: 1;
+    }
+
+    .form-group {
+      margin-bottom: 22px;
+      position: relative;
+      z-index: 1;
+    }
+
+    label { 
+      font-weight: 500; 
+      font-size: 14px;
+      margin-bottom: 8px; 
+      display: block; 
+      color: var(--primary);
+    }
+
+    .note { 
+      font-size: 12px; 
+      color: var(--text-muted); 
+      margin-bottom: 10px; 
+      font-weight: 300;
+      margin-top: -4px;
+    }
+
+    input, select { 
+      width: 100%; 
+      padding: 14px 18px; 
+      border: 2px solid #EEE; 
+      border-radius: 15px; 
+      box-sizing: border-box; 
+      font-size: 15px; 
+      font-family: 'Prompt', sans-serif;
+      background-color: white;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--secondary);
+      background-color: #FFFFFF;
+      box-shadow: 0 10px 20px rgba(255, 0, 127, 0.1), 0 0 0 4px rgba(255, 0, 127, 0.05);
+      transform: translateY(-2px); /* 3D lift */
+    }
+    
+    select {
+      appearance: none;
+      background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%22%3E%3Cpath%20fill%3D%22%236200EA%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%22%3E');
+      background-repeat: no-repeat;
+      background-position: right 15px top 50%;
+      background-size: 18px;
+    }
+
+    button { 
+      width: 100%; 
+      padding: 16px; 
+      background: var(--primary);
+      color: white; 
+      border: none; 
+      border-radius: 15px; 
+      margin-top: 15px; 
+      font-size: 18px; 
+      font-weight: 600; 
+      font-family: 'Prompt', sans-serif;
+      cursor: pointer; 
+      transition: all 0.4s ease;
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+
+    button:hover { 
+      background: linear-gradient(45deg, #6200EA, #FF007F);
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 15px 30px rgba(255, 0, 127, 0.3);
+    }
+    
+    button:active {
+      transform: translateY(-1px) scale(1);
+    }
+
+    button:disabled {
+      background: #BDBDBD;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    /* Loading Spinner Styling */
+    .spinner {
+      display: none; /* Hidden by default */
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s linear infinite;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2><span style="margin-right:10px;">✨</span>บันทึกเอกสารองค์กร</h2>
+    <form id="docForm">
+      
+      <div class="form-group">
+        <label>1. ข้อมูลเอกสารและหน่วยงาน</label>
+        <div class="note">รูปแบบ: ชื่อเอกสาร / หน่วยงาน (เช่น ภาษีป้าย / สำนักงานเขต)</div>
+        <input type="text" id="raw_data" placeholder="กรอกชื่อเอกสาร / หน่วยงาน" required>
+      </div>
+
+      <div class="form-group">
+        <label>2. แผนกที่รับผิดชอบ</label>
+        <select id="department" required>
+          <option value="" disabled selected>-- เลือกแผนกที่รับผิดชอบ --</option>
+          <option value="บุคคล">บุคคล (HR)</option>
+          <option value="บัญชี">บัญชี (Accounting)</option>
+          <option value="ขนส่ง">ขนส่ง (Logistics)</option>
+          <option value="จนท.จป">จนท.จป (Safety)</option>
+          <option value="บริหาร">บริหาร (Admin)</option>
+          <option value="อื่นๆ">อื่นๆ (Others)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>3. วันที่ออกเอกสาร (ค.ศ.)</label>
+        <input type="date" id="issue_date" required>
+      </div>
+
+      <div class="form-group">
+        <label>4. วันหมดอายุ (ค.ศ.)</label>
+        <input type="date" id="expiry_date" required>
+      </div>
+
+      <div class="form-group">
+        <label>5. จำนวนวันแจ้งเตือนล่วงหน้า</label>
+        <div class="note">ระบบเริ่มเตือนล่วงหน้า (ค่าเริ่มต้น 60 วัน)</div>
+        <input type="number" id="alert_days" value="60" required>
+      </div>
+
+      <button type="button" onclick="submitForm()" id="btnSubmit">
+        <div class="spinner" id="submitSpinner"></div>
+        <span id="btnText">บันทึกข้อมูลเข้าสู่ระบบ</span>
+      </button>
+    </form>
+  </div>
+
+  <script>
+    function submitForm() {
+      const btn = document.getElementById('btnSubmit');
+      const spinner = document.getElementById('submitSpinner');
+      const btnText = document.getElementById('btnText');
+      
+      // Show loading state
+      btnText.innerText = "กำลังประมวลผล...";
+      spinner.style.display = "block";
+      btn.disabled = true;
+
+      const data = {
+        rawData: document.getElementById('raw_data').value,
+        department: document.getElementById('department').value,
+        issueDate: document.getElementById('issue_date').value,
+        expiryDate: document.getElementById('expiry_date').value,
+        alertDays: document.getElementById('alert_days').value
+      };
+
+      if(!data.rawData || !data.department || !data.issueDate || !data.expiryDate || !data.alertDays){
+        alert("❌ กรุณากรอกข้อมูลให้ครบทุกช่องก่อนบันทึกค่ะ");
+        // Reset state
+        btnText.innerText = "บันทึกข้อมูลเข้าสู่ระบบ";
+        spinner.style.display = "none";
+        btn.disabled = false;
+        return;
+      }
+
+      google.script.run.withSuccessHandler(function() {
+        alert("✅ บันทึกข้อมูลสำเร็จ! ระบบจัดเก็บและคำนวณวันหมดอายุเรียบร้อยแล้วค่ะ");
+        document.getElementById('docForm').reset();
+        document.getElementById('alert_days').value = "60"; 
+        // Reset state
+        btnText.innerText = "บันทึกข้อมูลเข้าสู่ระบบ";
+        spinner.style.display = "none";
+        btn.disabled = false;
+      }).saveDataToSheet(data);
+    }
+  </script>
+</body>
+</html>
