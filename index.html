@@ -1,232 +1,58 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <base target="_top">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>บันทึกเอกสารองค์กร</title>
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
   <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   
   <style>
-    :root {
-      /* Dopamine Color Palette */
-      --primary: #6200EA;    /* Deep Purple */
-      --secondary: #FF007F;  /* Fuchsia Pink */
-      --accent: #00E676;     /* Neon Green */
-      --bg-gradient: linear-gradient(135deg, #6200EA 0%, #FF007F 100%);
-      --card-bg: rgba(255, 255, 255, 0.95);
-      --text-main: #1A1A1A;
-      --text-muted: #757575;
-      --border-color: #E0E0E0;
-    }
-
-    /* Animation ตอนโหลดหน้าเว็บ */
-    @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Animation ของไอคอนหมุนๆ ตอนโหลด */
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    body { 
-      font-family: 'Prompt', sans-serif; 
-      background: var(--bg-gradient);
-      color: var(--text-main);
-      padding: 20px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      overflow-x: hidden;
-    }
-
-    .container { 
-      width: 100%;
-      max-width: 480px; 
-      background: var(--card-bg); 
-      padding: 40px; 
-      border-radius: 30px; 
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); 
-      backdrop-filter: blur(10px); /* Effect กระจกฝ้า Glassmorphism */
-      animation: fadeInDown 0.6s ease-out;
-      position: relative;
-      overflow: hidden;
-      box-sizing: border-box;
-    }
-    
-    /* ตกแต่งวงกลมเพิ่มมิติหลังการ์ด */
-    .container::before {
-      content: '';
-      position: absolute;
-      top: -50px;
-      right: -50px;
-      width: 100px;
-      height: 100px;
-      background: rgba(255, 0, 127, 0.1);
-      border-radius: 50%;
-      z-index: 0;
-    }
-
-    h2 { 
-      text-align: center; 
-      margin-top: 0;
-      margin-bottom: 25px; 
-      font-size: 26px; 
-      font-weight: 600;
-      background: linear-gradient(45deg, #6200EA, #FF007F);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* กล่องโชว์โปรไฟล์ LINE ของพนักงาน */
-    .profile-card { 
-      background: #f8f9fa; 
-      padding: 18px; 
-      border-radius: 15px; 
-      border-left: 6px solid var(--secondary); 
-      margin-bottom: 25px; 
-      font-size: 14px; 
-      line-height: 1.7;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-      position: relative;
-      z-index: 1;
-    }
+    /* สไตล์ CSS สวยๆ ตัวเดิมครับ */
+    :root { --primary: #6200EA; --secondary: #FF007F; --bg-gradient: linear-gradient(135deg, #6200EA 0%, #FF007F 100%); --card-bg: rgba(255, 255, 255, 0.95); --text-main: #1A1A1A; --text-muted: #757575; }
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    body { font-family: 'Prompt', sans-serif; background: var(--bg-gradient); color: var(--text-main); padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; overflow-x: hidden; }
+    .container { width: 100%; max-width: 480px; background: var(--card-bg); padding: 40px; border-radius: 30px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); backdrop-filter: blur(10px); animation: fadeInDown 0.6s ease-out; position: relative; overflow: hidden; box-sizing: border-box; }
+    .container::before { content: ''; position: absolute; top: -50px; right: -50px; width: 100px; height: 100px; background: rgba(255, 0, 127, 0.1); border-radius: 50%; z-index: 0; }
+    h2 { text-align: center; margin-top: 0; margin-bottom: 25px; font-size: 26px; font-weight: 600; background: linear-gradient(45deg, #6200EA, #FF007F); -webkit-background-clip: text; -webkit-text-fill-color: transparent; position: relative; z-index: 1; }
+    .profile-card { background: #f8f9fa; padding: 18px; border-radius: 15px; border-left: 6px solid var(--secondary); margin-bottom: 25px; font-size: 14px; line-height: 1.7; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); position: relative; z-index: 1; }
     .profile-card span { font-weight: 600; color: var(--primary); }
-
-    .form-group {
-      margin-bottom: 22px;
-      position: relative;
-      z-index: 1;
-    }
-
-    label { 
-      font-weight: 500; 
-      font-size: 14px;
-      margin-bottom: 8px; 
-      display: block; 
-      color: var(--primary);
-    }
-
-    .note { 
-      font-size: 12px; 
-      color: var(--text-muted); 
-      margin-bottom: 10px; 
-      font-weight: 300;
-      margin-top: -4px;
-    }
-
-    input, select { 
-      width: 100%; 
-      padding: 14px 18px; 
-      border: 2px solid #EEE; 
-      border-radius: 15px; 
-      box-sizing: border-box; 
-      font-size: 15px; 
-      font-family: 'Prompt', sans-serif;
-      background-color: white;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    /* เอฟเฟกต์ 3D และเรืองแสงตอนกดเลือกช่องกรอก */
-    input:focus, select:focus {
-      outline: none;
-      border-color: var(--secondary);
-      background-color: #FFFFFF;
-      box-shadow: 0 10px 20px rgba(255, 0, 127, 0.1), 0 0 0 4px rgba(255, 0, 127, 0.05);
-      transform: translateY(-2px); 
-    }
-    
-    select {
-      appearance: none;
-      background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%22%3E%3Cpath%20fill%3D%22%236200EA%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%22%3E');
-      background-repeat: no-repeat;
-      background-position: right 15px top 50%;
-      background-size: 18px;
-    }
-
-    button { 
-      width: 100%; 
-      padding: 16px; 
-      background: var(--primary);
-      color: white; 
-      border: none; 
-      border-radius: 15px; 
-      margin-top: 15px; 
-      font-size: 18px; 
-      font-weight: 600; 
-      font-family: 'Prompt', sans-serif;
-      cursor: pointer; 
-      transition: all 0.4s ease;
-      position: relative;
-      z-index: 1;
-      overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-    }
-
-    button:hover { 
-      background: linear-gradient(45deg, #6200EA, #FF007F);
-      transform: translateY(-3px) scale(1.02);
-      box-shadow: 0 15px 30px rgba(255, 0, 127, 0.3);
-    }
-    
-    button:active { transform: translateY(-1px) scale(1); }
-
-    button:disabled {
-      background: #BDBDBD;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-    
-    /* สไตล์ตัวโหลดหมุนๆ */
-    .spinner {
-      display: none; 
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(255,255,255,0.3);
-      border-radius: 50%;
-      border-top-color: #fff;
-      animation: spin 1s linear infinite;
-    }
+    .form-group { margin-bottom: 22px; position: relative; z-index: 1; }
+    label { font-weight: 500; font-size: 14px; margin-bottom: 8px; display: block; color: var(--primary); }
+    .note { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; font-weight: 300; margin-top: -4px; }
+    input, select { width: 100%; padding: 14px 18px; border: 2px solid #EEE; border-radius: 15px; box-sizing: border-box; font-size: 15px; font-family: 'Prompt', sans-serif; background-color: white; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    input:focus, select:focus { outline: none; border-color: var(--secondary); background-color: #FFFFFF; box-shadow: 0 10px 20px rgba(255, 0, 127, 0.1), 0 0 0 4px rgba(255, 0, 127, 0.05); transform: translateY(-2px); }
+    button { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 15px; margin-top: 15px; font-size: 18px; font-weight: 600; font-family: 'Prompt', sans-serif; cursor: pointer; transition: all 0.4s ease; position: relative; z-index: 1; display: flex; justify-content: center; align-items: center; gap: 10px; }
+    button:hover { background: linear-gradient(45deg, #6200EA, #FF007F); transform: translateY(-3px) scale(1.02); box-shadow: 0 15px 30px rgba(255, 0, 127, 0.3); }
+    button:disabled { background: #BDBDBD; cursor: not-allowed; transform: none; box-shadow: none; }
+    .spinner { display: none; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s linear infinite; }
   </style>
 </head>
 <body>
   <div class="container">
     <h2><span style="margin-right:10px;">✨</span>บันทึกเอกสารองค์กร</h2>
     
-    <div class="profile-card" id="profileBox">
-      ⏳ กำลังดึงข้อมูลผู้ใช้งาน...
-    </div>
+    <div class="profile-card" id="profileBox">⏳ กำลังดึงข้อมูลผู้ใช้งาน...</div>
 
     <form id="docForm" style="display:none;">
-      
       <div class="form-group">
         <label>1. ข้อมูลเอกสารและหน่วยงาน</label>
-        <div class="note">รูปแบบ: ชื่อเอกสาร / หน่วยงาน (เช่น ภาษีป้าย / สำนักงานเขต)</div>
+        <div class="note">เช่น ภาษีป้าย / สำนักงานเขต</div>
         <input type="text" id="raw_data" placeholder="กรอกชื่อเอกสาร / หน่วยงาน" required>
       </div>
 
       <div class="form-group">
         <label>2. แผนกที่รับผิดชอบข้อมูลนี้</label>
-        <div class="note">ระบบล็อกแผนกให้อัตโนมัติ ตามสายงานของคุณ</div>
+        <div class="note">ระบบล็อกแผนกให้อัตโนมัติ</div>
         <select id="department" disabled style="background-color: #e9ecef; cursor: not-allowed; font-weight: bold; color: #333;">
           <option value="">-- กำลังโหลดแผนก --</option>
-          <option value="บุคคล">บุคคล (HR)</option>
-          <option value="บัญชี">บัญชี (Accounting)</option>
-          <option value="ขนส่ง">ขนส่ง (Logistics)</option>
-          <option value="จนท.จป">จนท.จป (Safety)</option>
-          <option value="บริหาร">บริหาร (Admin)</option>
-          <option value="อื่นๆ">อื่นๆ (Others)</option>
+          <option value="บุคคล">บุคคล</option>
+          <option value="บัญชี">บัญชี</option>
+          <option value="ขนส่ง">ขนส่ง</option>
+          <option value="จนท.จป">จนท.จป</option>
+          <option value="บริหาร">บริหาร</option>
+          <option value="อื่นๆ">อื่นๆ</option>
         </select>
       </div>
 
@@ -234,46 +60,51 @@
         <label>3. วันที่ออกเอกสาร (ค.ศ.)</label>
         <input type="date" id="issue_date" required>
       </div>
-
       <div class="form-group">
         <label>4. วันหมดอายุ (ค.ศ.)</label>
         <input type="date" id="expiry_date" required>
       </div>
-
       <div class="form-group">
-        <label>5. จำนวนวันแจ้งเตือนล่วงหน้า (วัน)</label>
-        <div class="note">ตั้งค่าเริ่มต้นที่ 60 วัน (สามารถแก้ไขตัวเลขได้)</div>
+        <label>5. แจ้งเตือนล่วงหน้า (วัน)</label>
         <input type="number" id="alert_days" value="60" required>
       </div>
 
       <button type="button" onclick="submitForm()" id="btnSubmit">
         <div class="spinner" id="submitSpinner"></div>
-        <span id="btnText">บันทึกข้อมูลเข้าสู่ระบบ</span>
+        <span id="btnText">บันทึกข้อมูล</span>
       </button>
     </form>
   </div>
 
   <script>
-    // 📌 ตั้งค่า LIFF ID ตรงนี้ (เอารหัสจากเว็บ LINE Developers มาใส่ค่ะ)
+    // 📌 ตั้งค่า 2 อย่างด้านล่างนี้ให้ถูกต้อง 📌
     const MY_LIFF_ID = "2010379470-zXEdvOrD"; 
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxkHcKCsM853RD225LZ7wUnxnBZF1D5HoEXnJm7FaLBY8h12oppFDkYmERoQwoTs9cf6w/exec"; 
 
-    // เริ่มทำงานทันทีเมื่อเปิดหน้าเว็บ
     window.onload = function() {
       liff.init({ liffId: MY_LIFF_ID }).then(() => {
         if (liff.isLoggedIn()) {
           liff.getProfile().then(profile => {
-            // ส่งรหัส LINE UID ไปเช็คข้อมูลพนักงานใน Google Sheets หลังบ้าน
-            google.script.run.withSuccessHandler(showProfile).getUserProfileForLIFF(profile.userId);
+            fetchUserProfile(profile.userId);
           }).catch(err => alert("เกิดข้อผิดพลาดในการดึงโปรไฟล์ LINE: " + err));
         } else {
-          liff.login(); // ถ้าแอบเปิดในเว็บเบราว์เซอร์ปกติ จะเด้งให้ล็อกอินไลน์ก่อน
+          liff.login(); 
         }
       }).catch(err => {
-        document.getElementById('profileBox').innerHTML = "❌ ตั้งค่า LIFF ID ไม่ถูกต้อง หรือระบบขัดข้อง";
+        document.getElementById('profileBox').innerHTML = "❌ ตั้งค่า LIFF ID ไม่ถูกต้อง";
       });
     };
 
-    // ฟังก์ชันตรวจสอบสิทธิ์พนักงานและแสดงหน้ากากโปรไฟล์
+    // 🌐 ยิง API ไปขอดูข้อมูลพนักงาน
+    function fetchUserProfile(userId) {
+      fetch(`${GAS_API_URL}?action=getUser&userId=${userId}`)
+        .then(response => response.json())
+        .then(data => showProfile(data))
+        .catch(error => {
+          document.getElementById('profileBox').innerHTML = "❌ ดึงข้อมูลจากฐานข้อมูลไม่สำเร็จ";
+        });
+    }
+
     function showProfile(data) {
       const profileBox = document.getElementById('profileBox');
       const form = document.getElementById('docForm');
@@ -281,8 +112,59 @@
 
       if(data.isFound) {
         if(data.status !== "Active") {
-          // 🔒 กรณีลงทะเบียนแล้ว แต่แอดมินยังไม่ Approve (Status = InActive)
-          profileBox.innerHTML = `👤 ชื่อ: <span>${data.name}</span><br>🏢 แผนก: <span>${data.role}</span><br>🔒 สถานะสิทธิ์: <span style="color:#FF007F; font-weight:bold;">รอแอดมินอนุมัติ (InActive)</span><br><br><small style="color:#757575;">*คุณจะสามารถบันทึกข้อมูลได้เมื่อแอดมินเปิดระบบให้แล้วเท่านั้นค่ะ</small>`;
+          profileBox.innerHTML = `👤 ชื่อ: <span>${data.name}</span><br>🏢 แผนก: <span>${data.role}</span><br>🔒 สถานะ: <span style="color:#FF007F; font-weight:bold;">รอแอดมินอนุมัติ (InActive)</span>`;
         } else {
-          // ✅ กรณีแอดมิน Approve เปิดระบบเรียบร้อย (Status = Active)
-          profileBox.innerHTML = `👤 ผู้ทำรายการ: <span>${data.name}</span><br>🏢 แผนก: <span>${data.role}</span><br
+          profileBox.innerHTML = `👤 ผู้ทำรายการ: <span>${data.name}</span><br>🏢 แผนก: <span>${data.role}</span><br>✅ สถานะ: <span style="color:#00E676; font-weight:bold;">เปิดใช้งานปกติ</span>`;
+          deptSelect.value = data.role; 
+          form.style.display = "block"; 
+        }
+      } else {
+        profileBox.innerHTML = `❌ ไม่พบสิทธิ์การเข้าใช้งาน<br><small>กรุณาพิมพ์ "ลงทะเบียน" ในไลน์แชทก่อนครับ</small>`;
+      }
+    }
+
+    // 🌐 ยิง API ไปบันทึกข้อมูล
+    function submitForm() {
+      const btn = document.getElementById('btnSubmit'), spinner = document.getElementById('submitSpinner'), btnText = document.getElementById('btnText');
+      btnText.innerText = "กำลังประมวลผล..."; spinner.style.display = "block"; btn.disabled = true;
+
+      const payload = {
+        action: 'saveData',
+        data: {
+          rawData: document.getElementById('raw_data').value,
+          department: document.getElementById('department').value,
+          issueDate: document.getElementById('issue_date').value,
+          expiryDate: document.getElementById('expiry_date').value,
+          alertDays: document.getElementById('alert_days').value
+        }
+      };
+
+      if(!payload.data.rawData || !payload.data.department || !payload.data.issueDate || !payload.data.expiryDate || !payload.data.alertDays){
+        alert("❌ กรุณากรอกข้อมูลให้ครบทุกช่องก่อนครับ");
+        btnText.innerText = "บันทึกข้อมูล"; spinner.style.display = "none"; btn.disabled = false;
+        return;
+      }
+
+      // ใช้ fetch ส่งข้อมูลไปให้ Google Apps Script
+      fetch(GAS_API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // ป้องกัน CORS error
+        body: JSON.stringify(payload)
+      })
+      .then(response => response.json())
+      .then(result => {
+        if(result.status === "success"){
+          alert("✅ บันทึกข้อมูลสำเร็จ! ระบบจัดเก็บและคำนวณวันหมดอายุเรียบร้อยแล้วครับ");
+          document.getElementById('docForm').reset();
+          if(liff.isInClient()) liff.closeWindow();
+          else { btnText.innerText = "บันทึกข้อมูล"; spinner.style.display = "none"; btn.disabled = false; }
+        }
+      })
+      .catch(error => {
+        alert("❌ ระบบขัดข้อง ไม่สามารถบันทึกได้");
+        btnText.innerText = "ลองใหม่อีกครั้ง"; spinner.style.display = "none"; btn.disabled = false;
+      });
+    }
+  </script>
+</body>
+</html>
