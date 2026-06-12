@@ -5,6 +5,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  
   <style>
     :root {
       /* Dopamine Color Palette */
@@ -18,20 +20,13 @@
       --border-color: #E0E0E0;
     }
 
-    /*Entrance Animation */
+    /* Animation ตอนโหลดหน้าเว็บ */
     @keyframes fadeInDown {
       from { opacity: 0; transform: translateY(-20px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Gradient Border Animation for Button */
-    @keyframes gradientBorder {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    /* Loading Spinner Animation */
+    /* Animation ของไอคอนหมุนๆ ตอนโหลด */
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
@@ -57,13 +52,14 @@
       padding: 40px; 
       border-radius: 30px; 
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); 
-      backdrop-filter: blur(10px); /* Glassmorphism */
+      backdrop-filter: blur(10px); /* Effect กระจกฝ้า Glassmorphism */
       animation: fadeInDown 0.6s ease-out;
       position: relative;
       overflow: hidden;
+      box-sizing: border-box;
     }
     
-    /* Decoration Circle */
+    /* ตกแต่งวงกลมเพิ่มมิติหลังการ์ด */
     .container::before {
       content: '';
       position: absolute;
@@ -79,8 +75,8 @@
     h2 { 
       text-align: center; 
       margin-top: 0;
-      margin-bottom: 30px; 
-      font-size: 28px; 
+      margin-bottom: 25px; 
+      font-size: 26px; 
       font-weight: 600;
       background: linear-gradient(45deg, #6200EA, #FF007F);
       -webkit-background-clip: text;
@@ -88,6 +84,21 @@
       position: relative;
       z-index: 1;
     }
+
+    /* กล่องโชว์โปรไฟล์ LINE ของพนักงาน */
+    .profile-card { 
+      background: #f8f9fa; 
+      padding: 18px; 
+      border-radius: 15px; 
+      border-left: 6px solid var(--secondary); 
+      margin-bottom: 25px; 
+      font-size: 14px; 
+      line-height: 1.7;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+      position: relative;
+      z-index: 1;
+    }
+    .profile-card span { font-weight: 600; color: var(--primary); }
 
     .form-group {
       margin-bottom: 22px;
@@ -123,12 +134,13 @@
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
+    /* เอฟเฟกต์ 3D และเรืองแสงตอนกดเลือกช่องกรอก */
     input:focus, select:focus {
       outline: none;
       border-color: var(--secondary);
       background-color: #FFFFFF;
       box-shadow: 0 10px 20px rgba(255, 0, 127, 0.1), 0 0 0 4px rgba(255, 0, 127, 0.05);
-      transform: translateY(-2px); /* 3D lift */
+      transform: translateY(-2px); 
     }
     
     select {
@@ -167,9 +179,7 @@
       box-shadow: 0 15px 30px rgba(255, 0, 127, 0.3);
     }
     
-    button:active {
-      transform: translateY(-1px) scale(1);
-    }
+    button:active { transform: translateY(-1px) scale(1); }
 
     button:disabled {
       background: #BDBDBD;
@@ -178,9 +188,9 @@
       box-shadow: none;
     }
     
-    /* Loading Spinner Styling */
+    /* สไตล์ตัวโหลดหมุนๆ */
     .spinner {
-      display: none; /* Hidden by default */
+      display: none; 
       width: 20px;
       height: 20px;
       border: 3px solid rgba(255,255,255,0.3);
@@ -188,13 +198,17 @@
       border-top-color: #fff;
       animation: spin 1s linear infinite;
     }
-
   </style>
 </head>
 <body>
   <div class="container">
     <h2><span style="margin-right:10px;">✨</span>บันทึกเอกสารองค์กร</h2>
-    <form id="docForm">
+    
+    <div class="profile-card" id="profileBox">
+      ⏳ กำลังดึงข้อมูลผู้ใช้งาน...
+    </div>
+
+    <form id="docForm" style="display:none;">
       
       <div class="form-group">
         <label>1. ข้อมูลเอกสารและหน่วยงาน</label>
@@ -203,9 +217,10 @@
       </div>
 
       <div class="form-group">
-        <label>2. แผนกที่รับผิดชอบ</label>
-        <select id="department" required>
-          <option value="" disabled selected>-- เลือกแผนกที่รับผิดชอบ --</option>
+        <label>2. แผนกที่รับผิดชอบข้อมูลนี้</label>
+        <div class="note">ระบบล็อกแผนกให้อัตโนมัติ ตามสายงานของคุณ</div>
+        <select id="department" disabled style="background-color: #e9ecef; cursor: not-allowed; font-weight: bold; color: #333;">
+          <option value="">-- กำลังโหลดแผนก --</option>
           <option value="บุคคล">บุคคล (HR)</option>
           <option value="บัญชี">บัญชี (Accounting)</option>
           <option value="ขนส่ง">ขนส่ง (Logistics)</option>
@@ -226,8 +241,8 @@
       </div>
 
       <div class="form-group">
-        <label>5. จำนวนวันแจ้งเตือนล่วงหน้า</label>
-        <div class="note">ระบบเริ่มเตือนล่วงหน้า (ค่าเริ่มต้น 60 วัน)</div>
+        <label>5. จำนวนวันแจ้งเตือนล่วงหน้า (วัน)</label>
+        <div class="note">ตั้งค่าเริ่มต้นที่ 60 วัน (สามารถแก้ไขตัวเลขได้)</div>
         <input type="number" id="alert_days" value="60" required>
       </div>
 
@@ -239,43 +254,35 @@
   </div>
 
   <script>
-    function submitForm() {
-      const btn = document.getElementById('btnSubmit');
-      const spinner = document.getElementById('submitSpinner');
-      const btnText = document.getElementById('btnText');
-      
-      // Show loading state
-      btnText.innerText = "กำลังประมวลผล...";
-      spinner.style.display = "block";
-      btn.disabled = true;
+    // 📌 ตั้งค่า LIFF ID ตรงนี้ (เอารหัสจากเว็บ LINE Developers มาใส่ค่ะ)
+    const MY_LIFF_ID = "ใส่_LIFF_ID_ของคุณที่นี่"; 
 
-      const data = {
-        rawData: document.getElementById('raw_data').value,
-        department: document.getElementById('department').value,
-        issueDate: document.getElementById('issue_date').value,
-        expiryDate: document.getElementById('expiry_date').value,
-        alertDays: document.getElementById('alert_days').value
-      };
+    // เริ่มทำงานทันทีเมื่อเปิดหน้าเว็บ
+    window.onload = function() {
+      liff.init({ liffId: MY_LIFF_ID }).then(() => {
+        if (liff.isLoggedIn()) {
+          liff.getProfile().then(profile => {
+            // ส่งรหัส LINE UID ไปเช็คข้อมูลพนักงานใน Google Sheets หลังบ้าน
+            google.script.run.withSuccessHandler(showProfile).getUserProfileForLIFF(profile.userId);
+          }).catch(err => alert("เกิดข้อผิดพลาดในการดึงโปรไฟล์ LINE: " + err));
+        } else {
+          liff.login(); // ถ้าแอบเปิดในเว็บเบราว์เซอร์ปกติ จะเด้งให้ล็อกอินไลน์ก่อน
+        }
+      }).catch(err => {
+        document.getElementById('profileBox').innerHTML = "❌ ตั้งค่า LIFF ID ไม่ถูกต้อง หรือระบบขัดข้อง";
+      });
+    };
 
-      if(!data.rawData || !data.department || !data.issueDate || !data.expiryDate || !data.alertDays){
-        alert("❌ กรุณากรอกข้อมูลให้ครบทุกช่องก่อนบันทึกค่ะ");
-        // Reset state
-        btnText.innerText = "บันทึกข้อมูลเข้าสู่ระบบ";
-        spinner.style.display = "none";
-        btn.disabled = false;
-        return;
-      }
+    // ฟังก์ชันตรวจสอบสิทธิ์พนักงานและแสดงหน้ากากโปรไฟล์
+    function showProfile(data) {
+      const profileBox = document.getElementById('profileBox');
+      const form = document.getElementById('docForm');
+      const deptSelect = document.getElementById('department');
 
-      google.script.run.withSuccessHandler(function() {
-        alert("✅ บันทึกข้อมูลสำเร็จ! ระบบจัดเก็บและคำนวณวันหมดอายุเรียบร้อยแล้วค่ะ");
-        document.getElementById('docForm').reset();
-        document.getElementById('alert_days').value = "60"; 
-        // Reset state
-        btnText.innerText = "บันทึกข้อมูลเข้าสู่ระบบ";
-        spinner.style.display = "none";
-        btn.disabled = false;
-      }).saveDataToSheet(data);
-    }
-  </script>
-</body>
-</html>
+      if(data.isFound) {
+        if(data.status !== "Active") {
+          // 🔒 กรณีลงทะเบียนแล้ว แต่แอดมินยังไม่ Approve (Status = InActive)
+          profileBox.innerHTML = `👤 ชื่อ: <span>${data.name}</span><br>🏢 แผนก: <span>${data.role}</span><br>🔒 สถานะสิทธิ์: <span style="color:#FF007F; font-weight:bold;">รอแอดมินอนุมัติ (InActive)</span><br><br><small style="color:#757575;">*คุณจะสามารถบันทึกข้อมูลได้เมื่อแอดมินเปิดระบบให้แล้วเท่านั้นค่ะ</small>`;
+        } else {
+          // ✅ กรณีแอดมิน Approve เปิดระบบเรียบร้อย (Status = Active)
+          profileBox.innerHTML = `👤 ผู้ทำรายการ: <span>${data.name}</span><br>🏢 แผนก: <span>${data.role}</span><br
