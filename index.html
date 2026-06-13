@@ -1,170 +1,228 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>บันทึกเอกสารองค์กร</title>
-  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-  
-  <style>
-    /* สไตล์ CSS สวยๆ ตัวเดิมครับ */
-    :root { --primary: #6200EA; --secondary: #FF007F; --bg-gradient: linear-gradient(135deg, #6200EA 0%, #FF007F 100%); --card-bg: rgba(255, 255, 255, 0.95); --text-main: #1A1A1A; --text-muted: #757575; }
-    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    body { font-family: 'Prompt', sans-serif; background: var(--bg-gradient); color: var(--text-main); padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; overflow-x: hidden; }
-    .container { width: 100%; max-width: 480px; background: var(--card-bg); padding: 40px; border-radius: 30px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); backdrop-filter: blur(10px); animation: fadeInDown 0.6s ease-out; position: relative; overflow: hidden; box-sizing: border-box; }
-    .container::before { content: ''; position: absolute; top: -50px; right: -50px; width: 100px; height: 100px; background: rgba(255, 0, 127, 0.1); border-radius: 50%; z-index: 0; }
-    h2 { text-align: center; margin-top: 0; margin-bottom: 25px; font-size: 26px; font-weight: 600; background: linear-gradient(45deg, #6200EA, #FF007F); -webkit-background-clip: text; -webkit-text-fill-color: transparent; position: relative; z-index: 1; }
-    .profile-card { background: #f8f9fa; padding: 18px; border-radius: 15px; border-left: 6px solid var(--secondary); margin-bottom: 25px; font-size: 14px; line-height: 1.7; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); position: relative; z-index: 1; }
-    .profile-card span { font-weight: 600; color: var(--primary); }
-    .form-group { margin-bottom: 22px; position: relative; z-index: 1; }
-    label { font-weight: 500; font-size: 14px; margin-bottom: 8px; display: block; color: var(--primary); }
-    .note { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; font-weight: 300; margin-top: -4px; }
-    input, select { width: 100%; padding: 14px 18px; border: 2px solid #EEE; border-radius: 15px; box-sizing: border-box; font-size: 15px; font-family: 'Prompt', sans-serif; background-color: white; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-    input:focus, select:focus { outline: none; border-color: var(--secondary); background-color: #FFFFFF; box-shadow: 0 10px 20px rgba(255, 0, 127, 0.1), 0 0 0 4px rgba(255, 0, 127, 0.05); transform: translateY(-2px); }
-    button { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 15px; margin-top: 15px; font-size: 18px; font-weight: 600; font-family: 'Prompt', sans-serif; cursor: pointer; transition: all 0.4s ease; position: relative; z-index: 1; display: flex; justify-content: center; align-items: center; gap: 10px; }
-    button:hover { background: linear-gradient(45deg, #6200EA, #FF007F); transform: translateY(-3px) scale(1.02); box-shadow: 0 15px 30px rgba(255, 0, 127, 0.3); }
-    button:disabled { background: #BDBDBD; cursor: not-allowed; transform: none; box-shadow: none; }
-    .spinner { display: none; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s linear infinite; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>บันทึกเอกสาร HR</title>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <style>
+        body { font-family: 'Sarabun', sans-serif; background-color: #f3f4f6; margin: 0; padding: 20px; }
+        .container { max-width: 500px; margin: 0 auto; background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #1f2937; margin-top: 0; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; color: #4b5563; font-size: 14px; }
+        input[type="text"], input[type="date"], input[type="number"], select {
+            width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; box-sizing: border-box; font-family: inherit;
+        }
+        
+        /* สไตล์สำหรับ Chip Toggle */
+        .chip-group { display: flex; gap: 10px; margin-bottom: 10px; }
+        .chip { flex: 1; text-align: center; padding: 10px; border: 1px solid #10b981; border-radius: 20px; color: #10b981; cursor: pointer; font-weight: bold; transition: all 0.3s; }
+        .chip.active { background-color: #10b981; color: white; }
+        
+        /* ซ่อนส่วนอัปโหลดไฟล์ไว้ก่อน */
+        #uploadSection { display: none; background: #f9fafb; padding: 15px; border: 2px dashed #10b981; border-radius: 8px; text-align: center; margin-bottom: 15px; }
+        
+        .submit-btn { width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .submit-btn:disabled { background: #9ca3af; cursor: not-allowed; }
+        
+        /* Loading Overlay */
+        #loading { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); color: white; justify-content: center; align-items: center; flex-direction: column; z-index: 999; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 10px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h2><span style="margin-right:10px;">✨</span>บันทึกเอกสารองค์กร</h2>
-    
-    <div class="profile-card" id="profileBox">⏳ กำลังดึงข้อมูลผู้ใช้งาน...</div>
 
-    <form id="docForm" style="display:none;">
-      <div class="form-group">
-        <label>1. ข้อมูลเอกสารและหน่วยงาน</label>
-        <div class="note">เช่น ภาษีป้าย / สำนักงานเขต</div>
-        <input type="text" id="raw_data" placeholder="กรอกชื่อเอกสาร / หน่วยงาน" required>
-      </div>
+    <div class="container">
+        <h2>📝 บันทึกเอกสารใหม่</h2>
+        <form id="hrForm">
+            <div class="form-group">
+                <label>ข้อความอ้างอิง (Raw Data / ชื่อเอกสาร / หน่วยงาน)</label>
+                <input type="text" id="rawData" placeholder="เช่น Work Permit / กรมการจัดหางาน" required>
+            </div>
+            <div class="form-group">
+                <label>แผนกที่รับผิดชอบ</label>
+                <select id="department" required>
+                    <option value="" disabled selected>เลือกแผนก...</option>
+                    <option value="บุคคล">บุคคล</option>
+                    <option value="บัญชี">บัญชี</option>
+                    <option value="ขนส่ง">ขนส่ง</option>
+                    <option value="จนท.จป">จนท.จป</option>
+                    <option value="บริหาร">บริหาร</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <div class="form-group" style="flex: 1;">
+                    <label>วันที่ออกเอกสาร</label>
+                    <input type="date" id="issueDate" required>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>วันหมดอายุ</label>
+                    <input type="date" id="expiryDate" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>แจ้งเตือนล่วงหน้า (วัน)</label>
+                <input type="number" id="alertDays" value="30" required>
+            </div>
 
-      <div class="form-group">
-        <label>2. แผนกที่รับผิดชอบข้อมูลนี้</label>
-        <div class="note">ระบบล็อกแผนกให้อัตโนมัติ</div>
-        <select id="department" disabled style="background-color: #e9ecef; cursor: not-allowed; font-weight: bold; color: #333;">
-          <option value="">-- กำลังโหลดแผนก --</option>
-          <option value="บุคคล">บุคคล</option>
-          <option value="บัญชี">บัญชี</option>
-          <option value="ขนส่ง">ขนส่ง</option>
-          <option value="จนท.จป">จนท.จป</option>
-          <option value="บริหาร">บริหาร</option>
-          <option value="อื่นๆ">อื่นๆ</option>
-        </select>
-      </div>
+            <label>แนบไฟล์เอกสาร (Optional)</label>
+            <div class="chip-group">
+                <div class="chip active" id="chipNoFile" onclick="toggleFile('none')">❌ ไม่แนบไฟล์</div>
+                <div class="chip" id="chipHasFile" onclick="toggleFile('attach')">📎 แนบไฟล์</div>
+            </div>
 
-      <div class="form-group">
-        <label>3. วันที่ออกเอกสาร (ค.ศ.)</label>
-        <input type="date" id="issue_date" required>
-      </div>
-      <div class="form-group">
-        <label>4. วันหมดอายุ (ค.ศ.)</label>
-        <input type="date" id="expiry_date" required>
-      </div>
-      <div class="form-group">
-        <label>5. แจ้งเตือนล่วงหน้า (วัน)</label>
-        <input type="number" id="alert_days" value="60" required>
-      </div>
+            <div id="uploadSection">
+                <input type="file" id="fileInput" accept="image/*,application/pdf">
+                <p style="font-size: 12px; color: #6b7280; margin-top: 5px;">รองรับรูปภาพ และ PDF (ไม่เกิน 5MB)</p>
+            </div>
 
-      <button type="button" onclick="submitForm()" id="btnSubmit">
-        <div class="spinner" id="submitSpinner"></div>
-        <span id="btnText">บันทึกข้อมูล</span>
-      </button>
-    </form>
-  </div>
+            <button type="button" class="submit-btn" id="submitBtn" onclick="submitForm()">💾 บันทึกข้อมูล</button>
+        </form>
+    </div>
 
-  <script>
-    // 📌 ตั้งค่า 2 อย่างด้านล่างนี้ให้ถูกต้อง 📌
-    const MY_LIFF_ID = "2010379470-zXEdvOrD"; 
-    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxkHcKCsM853RD225LZ7wUnxnBZF1D5HoEXnJm7FaLBY8h12oppFDkYmERoQwoTs9cf6w/exec"; 
+    <div id="loading">
+        <div class="spinner"></div>
+        <p>กำลังบันทึกข้อมูลและอัปโหลดไฟล์...</p>
+    </div>
 
-    window.onload = function() {
-      liff.init({ liffId: MY_LIFF_ID }).then(() => {
-        if (liff.isLoggedIn()) {
-          liff.getProfile().then(profile => {
-            fetchUserProfile(profile.userId);
-          }).catch(err => alert("เกิดข้อผิดพลาดในการดึงโปรไฟล์ LINE: " + err));
-        } else {
-          liff.login(); 
+    <script>
+        // 🔴 1. ใส่ Web App URL ของ Google Apps Script ที่ได้จากการ Deploy 
+        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxkHcKCsM853RD225LZ7wUnxnBZF1D5HoEXnJm7FaLBY8h12oppFDkYmERoQwoTs9cf6w/exec";
+        
+        // 🔴 2. ใส่ LIFF ID ของคุณ
+        const LIFF_ID = "2010379470-zXEdvOrD";
+
+        let currentUserId = "";
+        let currentUserName = "";
+
+        // เริ่มต้นการทำงานของ LIFF เมื่อเปิดหน้าเว็บ
+        window.onload = function() {
+            initializeLiff();
+        };
+
+        async function initializeLiff() {
+            try {
+                await liff.init({ liffId: LIFF_ID });
+                if (liff.isLoggedIn()) {
+                    const profile = await liff.getProfile();
+                    currentUserId = profile.userId;
+                    currentUserName = profile.displayName;
+                } else {
+                    // ถ้ารันในเบราว์เซอร์ปกติที่ไม่ได้ล็อกอิน LINE
+                    liff.login();
+                }
+            } catch (err) {
+                console.error("LIFF Init Error: ", err);
+                alert("ไม่สามารถเชื่อมต่อระบบ LINE ได้");
+            }
         }
-      }).catch(err => {
-        document.getElementById('profileBox').innerHTML = "❌ ตั้งค่า LIFF ID ไม่ถูกต้อง";
-      });
-    };
 
-    // 🌐 ยิง API ไปขอดูข้อมูลพนักงาน
-    function fetchUserProfile(userId) {
-      fetch(`${GAS_API_URL}?action=getUser&userId=${userId}`)
-        .then(response => response.json())
-        .then(data => showProfile(data))
-        .catch(error => {
-          document.getElementById('profileBox').innerHTML = "❌ ดึงข้อมูลจากฐานข้อมูลไม่สำเร็จ";
-        });
-    }
-
-    function showProfile(data) {
-      const profileBox = document.getElementById('profileBox');
-      const form = document.getElementById('docForm');
-      const deptSelect = document.getElementById('department');
-
-      if(data.isFound) {
-        if(data.status !== "Active") {
-          profileBox.innerHTML = `👤 ชื่อ: <span>${data.name}</span><br>🏢 แผนก: <span>${data.role}</span><br>🔒 สถานะ: <span style="color:#FF007F; font-weight:bold;">รอแอดมินอนุมัติ (InActive)</span>`;
-        } else {
-          profileBox.innerHTML = `👤 ผู้ทำรายการ: <span>${data.name}</span><br>🏢 แผนก: <span>${data.role}</span><br>✅ สถานะ: <span style="color:#00E676; font-weight:bold;">เปิดใช้งานปกติ</span>`;
-          deptSelect.value = data.role; 
-          form.style.display = "block"; 
+        // ฟังก์ชันสลับ UI ของ Chip เลือกแนบไฟล์
+        function toggleFile(action) {
+            const uploadSection = document.getElementById('uploadSection');
+            const fileInput = document.getElementById('fileInput');
+            
+            if (action === 'attach') {
+                document.getElementById('chipHasFile').classList.add('active');
+                document.getElementById('chipNoFile').classList.remove('active');
+                uploadSection.style.display = 'block';
+            } else {
+                document.getElementById('chipNoFile').classList.add('active');
+                document.getElementById('chipHasFile').classList.remove('active');
+                uploadSection.style.display = 'none';
+                fileInput.value = ''; // ล้างค่าไฟล์ที่อาจจะเลือกไว้ทิ้ง
+            }
         }
-      } else {
-        profileBox.innerHTML = `❌ ไม่พบสิทธิ์การเข้าใช้งาน<br><small>กรุณาพิมพ์ "ลงทะเบียน" ในไลน์แชทก่อนครับ</small>`;
-      }
-    }
 
-    // 🌐 ยิง API ไปบันทึกข้อมูล
-    function submitForm() {
-      const btn = document.getElementById('btnSubmit'), spinner = document.getElementById('submitSpinner'), btnText = document.getElementById('btnText');
-      btnText.innerText = "กำลังประมวลผล..."; spinner.style.display = "block"; btn.disabled = true;
-
-      const payload = {
-        action: 'saveData',
-        data: {
-          rawData: document.getElementById('raw_data').value,
-          department: document.getElementById('department').value,
-          issueDate: document.getElementById('issue_date').value,
-          expiryDate: document.getElementById('expiry_date').value,
-          alertDays: document.getElementById('alert_days').value
+        // ฟังก์ชันแปลงไฟล์เป็น Base64
+        function getBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
         }
-      };
 
-      if(!payload.data.rawData || !payload.data.department || !payload.data.issueDate || !payload.data.expiryDate || !payload.data.alertDays){
-        alert("❌ กรุณากรอกข้อมูลให้ครบทุกช่องก่อนครับ");
-        btnText.innerText = "บันทึกข้อมูล"; spinner.style.display = "none"; btn.disabled = false;
-        return;
-      }
+        // ฟังก์ชันส่งข้อมูล
+        async function submitForm() {
+            // เช็คว่ากรอกข้อมูลครบไหม
+            if(!document.getElementById('hrForm').checkValidity()) {
+                alert("กรุณากรอกข้อมูลที่มีเครื่องหมาย * ให้ครบถ้วน");
+                return;
+            }
 
-      // ใช้ fetch ส่งข้อมูลไปให้ Google Apps Script
-      fetch(GAS_API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // ป้องกัน CORS error
-        body: JSON.stringify(payload)
-      })
-      .then(response => response.json())
-      .then(result => {
-        if(result.status === "success"){
-          alert("✅ บันทึกข้อมูลสำเร็จ! ระบบจัดเก็บและคำนวณวันหมดอายุเรียบร้อยแล้วครับ");
-          document.getElementById('docForm').reset();
-          if(liff.isInClient()) liff.closeWindow();
-          else { btnText.innerText = "บันทึกข้อมูล"; spinner.style.display = "none"; btn.disabled = false; }
+            document.getElementById('loading').style.display = 'flex';
+            document.getElementById('submitBtn').disabled = true;
+
+            const isAttach = document.getElementById('chipHasFile').classList.contains('active');
+            const fileInput = document.getElementById('fileInput');
+            
+            let fileBase64 = "";
+            let fileName = "";
+            let fileMimeType = "";
+
+            // ถ้าเลือกแนบไฟล์และมีไฟล์ถูกเลือกจริง
+            if (isAttach && fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                
+                // เช็คขนาดไฟล์ไม่ให้เกิน 5MB
+                if (file.size > 5 * 1024 * 1024) {
+                    alert("ขนาดไฟล์เกิน 5MB กรุณาเลือกไฟล์ใหม่ค่ะ");
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('submitBtn').disabled = false;
+                    return;
+                }
+
+                fileName = file.name;
+                fileMimeType = file.type;
+                fileBase64 = await getBase64(file);
+            }
+
+            // จัดเตรียมข้อมูลสำหรับส่งไปให้ Apps Script
+            const payload = {
+                action: "saveData",
+                data: {
+                    rawData: document.getElementById('rawData').value,
+                    department: document.getElementById('department').value,
+                    issueDate: document.getElementById('issueDate').value,
+                    expiryDate: document.getElementById('expiryDate').value,
+                    alertDays: document.getElementById('alertDays').value,
+                    userId: currentUserId,         // 🌟 ส่ง UID
+                    userName: currentUserName,     // 🌟 ส่งชื่อพนักงาน
+                    fileBase64: fileBase64,        // 🌟 ส่งไฟล์ที่แปลงแล้ว
+                    fileName: fileName,
+                    fileMimeType: fileMimeType
+                }
+            };
+
+            try {
+                // ส่งข้อมูลผ่าน API
+                const response = await fetch(GAS_WEB_APP_URL, {
+                    method: 'POST',
+                    // mode: 'no-cors' จะใช้เมื่อติดปัญหา CORS แต่จะอ่านค่า return ไม่ได้
+                    // แนะนำให้ Web App เซ็ตสิทธิ์เป็น "Anyone (ทุกคน)" เพื่อให้รับ POST ได้สมบูรณ์
+                    body: JSON.stringify(payload)
+                });
+
+                document.getElementById('loading').style.display = 'none';
+                
+                // แจ้งเตือนและปิดหน้าต่าง LIFF กลับไปที่แชท
+                alert("✅ บันทึกข้อมูลเรียบร้อยแล้วค่ะ!");
+                liff.closeWindow(); 
+
+            } catch (error) {
+                console.error("Error:", error);
+                alert("❌ เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง");
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('submitBtn').disabled = false;
+            }
         }
-      })
-      .catch(error => {
-        alert("❌ ระบบขัดข้อง ไม่สามารถบันทึกได้");
-        btnText.innerText = "ลองใหม่อีกครั้ง"; spinner.style.display = "none"; btn.disabled = false;
-      });
-    }
-  </script>
+    </script>
 </body>
 </html>
+     
+
+    
