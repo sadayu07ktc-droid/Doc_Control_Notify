@@ -3,105 +3,327 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>บันทึกเอกสาร HR</title>
+    <title>บันทึกเอกสาร HR (Smart Sync)</title>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
     <style>
-        body { font-family: 'Sarabun', sans-serif; background-color: #f3f4f6; margin: 0; padding: 20px; }
-        .container { max-width: 500px; margin: 0 auto; background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h2 { text-align: center; color: #1f2937; margin-top: 0; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-weight: bold; margin-bottom: 5px; color: #4b5563; font-size: 14px; }
-        input[type="text"], input[type="date"], input[type="number"], select {
-            width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; box-sizing: border-box; font-family: inherit;
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --success: #10B981;
+            --bg-color: #EEF2FF;
+            --card-bg: #FFFFFF;
+            --text-main: #1F2937;
+            --text-muted: #6B7280;
+            --border: #E5E7EB;
         }
-        
-        /* สไตล์สำหรับ Chip Toggle */
-        .chip-group { display: flex; gap: 10px; margin-bottom: 10px; }
-        .chip { flex: 1; text-align: center; padding: 10px; border: 1px solid #10b981; border-radius: 20px; color: #10b981; cursor: pointer; font-weight: bold; transition: all 0.3s; }
-        .chip.active { background-color: #10b981; color: white; }
-        
-        /* ซ่อนส่วนอัปโหลดไฟล์ไว้ก่อน */
-        #uploadSection { display: none; background: #f9fafb; padding: 15px; border: 2px dashed #10b981; border-radius: 8px; text-align: center; margin-bottom: 15px; }
-        
-        .submit-btn { width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .submit-btn:disabled { background: #9ca3af; cursor: not-allowed; }
-        
-        /* Loading Overlay */
-        #loading { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); color: white; justify-content: center; align-items: center; flex-direction: column; z-index: 999; }
-        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 10px; }
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            background: linear-gradient(135deg, #E0E7FF 0%, #EEF2FF 100%);
+            margin: 0;
+            padding: 20px 15px;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* --- Profile Login Status --- */
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary) 0%, #818CF8 100%);
+            padding: 25px 20px 20px;
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+
+        .profile-pic {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            object-fit: cover;
+            margin-bottom: 10px;
+            background-color: #E0E7FF;
+        }
+
+        .user-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0 0 5px 0;
+        }
+
+        .login-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            backdrop-filter: blur(5px);
+        }
+
+        /* --- Form Elements --- */
+        .form-body {
+            padding: 25px 20px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-main);
+            font-size: 14px;
+        }
+
+        input[type="text"], input[type="date"], input[type="number"], select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 15px;
+            transition: all 0.3s;
+            box-sizing: border-box;
+            background-color: #F9FAFB;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: #FFFFFF;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        /* --- File Upload UI (Chip Toggle) --- */
+        .file-section {
+            background: #F8FAFC;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .chip-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .chip {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border: 2px solid var(--border);
+            border-radius: 25px;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .chip.active {
+            border-color: var(--primary);
+            background: rgba(79, 70, 229, 0.05);
+            color: var(--primary);
+        }
+
+        #uploadSection {
+            display: none;
+            text-align: center;
+            padding: 20px 10px;
+            border: 2px dashed var(--primary);
+            border-radius: 10px;
+            background: white;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        input[type="file"] {
+            width: 100%;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        input[type="file"]::file-selector-button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: 0.3s;
+            font-family: inherit;
+        }
+
+        /* --- Buttons --- */
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+            font-family: inherit;
+        }
+
+        .submit-btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(79, 70, 229, 0.3);
+        }
+
+        .submit-btn:disabled {
+            background: var(--text-muted);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* --- Loading Overlay --- */
+        #loading {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            border-radius: 20px;
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2>📝 บันทึกเอกสารใหม่</h2>
-        <form id="hrForm">
-            <div class="form-group">
-                <label>ข้อความอ้างอิง (Raw Data / ชื่อเอกสาร / หน่วยงาน)</label>
-                <input type="text" id="rawData" placeholder="เช่น Work Permit / กรมการจัดหางาน" required>
-            </div>
-            <div class="form-group">
-                <label>แผนกที่รับผิดชอบ</label>
-                <select id="department" required>
-                    <option value="" disabled selected>เลือกแผนก...</option>
-                    <option value="บุคคล">บุคคล</option>
-                    <option value="บัญชี">บัญชี</option>
-                    <option value="ขนส่ง">ขนส่ง</option>
-                    <option value="จนท.จป">จนท.จป</option>
-                    <option value="บริหาร">บริหาร</option>
-                </select>
-            </div>
-            <div style="display: flex; gap: 10px;">
-                <div class="form-group" style="flex: 1;">
-                    <label>วันที่ออกเอกสาร</label>
-                    <input type="date" id="issueDate" required>
+        <div class="profile-header">
+            <img id="profileImage" class="profile-pic" src="https://via.placeholder.com/80?text=Wait" alt="Profile">
+            <h2 id="profileName" class="user-name">กำลังโหลดข้อมูล...</h2>
+            <div class="login-badge"><i class="fa-brands fa-line"></i> เข้าสู่ระบบผ่าน LINE แล้ว</div>
+        </div>
+
+        <div class="form-body">
+            <form id="hrForm">
+                <div class="form-group">
+                    <label>ข้อความอ้างอิง (Raw Data / ชื่อเอกสาร)</label>
+                    <input type="text" id="rawData" placeholder="เช่น Work Permit / สำนักงานเขต" required>
                 </div>
-                <div class="form-group" style="flex: 1;">
-                    <label>วันหมดอายุ</label>
-                    <input type="date" id="expiryDate" required>
+
+                <div class="form-group">
+                    <label>แผนกที่รับผิดชอบ</label>
+                    <select id="department" required>
+                        <option value="" disabled selected>เลือกแผนก...</option>
+                        <option value="บุคคล">บุคคล</option>
+                        <option value="บัญชี">บัญชี</option>
+                        <option value="ขนส่ง">ขนส่ง</option>
+                        <option value="จนท.จป">จนท.จป</option>
+                        <option value="บริหาร">บริหาร</option>
+                        <option value="อื่นๆ">อื่นๆ</option>
+                    </select>
                 </div>
-            </div>
-            <div class="form-group">
-                <label>แจ้งเตือนล่วงหน้า (วัน)</label>
-                <input type="number" id="alertDays" value="30" required>
-            </div>
 
-            <label>แนบไฟล์เอกสาร (Optional)</label>
-            <div class="chip-group">
-                <div class="chip active" id="chipNoFile" onclick="toggleFile('none')">❌ ไม่แนบไฟล์</div>
-                <div class="chip" id="chipHasFile" onclick="toggleFile('attach')">📎 แนบไฟล์</div>
-            </div>
+                <div style="display: flex; gap: 15px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>วันที่ออก</label>
+                        <input type="date" id="issueDate" required>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>วันหมดอายุ</label>
+                        <input type="date" id="expiryDate" required>
+                    </div>
+                </div>
 
-            <div id="uploadSection">
-                <input type="file" id="fileInput" accept="image/*,application/pdf">
-                <p style="font-size: 12px; color: #6b7280; margin-top: 5px;">รองรับรูปภาพ และ PDF (ไม่เกิน 5MB)</p>
-            </div>
+                <div class="form-group">
+                    <label>แจ้งเตือนล่วงหน้า (วัน)</label>
+                    <input type="number" id="alertDays" value="30" required>
+                </div>
 
-            <button type="button" class="submit-btn" id="submitBtn" onclick="submitForm()">💾 บันทึกข้อมูล</button>
-        </form>
-    </div>
+                <div class="file-section">
+                    <label><i class="fa-solid fa-cloud-arrow-up"></i> แนบไฟล์เอกสาร (ตัวเลือก)</label>
+                    <div class="chip-group">
+                        <div class="chip active" id="chipNoFile" onclick="toggleFile('none')">❌ ไม่แนบ</div>
+                        <div class="chip" id="chipHasFile" onclick="toggleFile('attach')">📎 แนบไฟล์</div>
+                    </div>
 
-    <div id="loading">
-        <div class="spinner"></div>
-        <p>กำลังบันทึกข้อมูลและอัปโหลดไฟล์...</p>
+                    <div id="uploadSection">
+                        <input type="file" id="fileInput" accept="image/*,application/pdf">
+                        <div style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">
+                            <i class="fa-solid fa-circle-info"></i> รองรับรูปภาพและ PDF (ไม่เกิน 5MB)
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="submit-btn" id="submitBtn" onclick="submitForm()">
+                    <i class="fa-solid fa-paper-plane"></i> บันทึกข้อมูล
+                </button>
+            </form>
+        </div>
+
+        <div id="loading">
+            <div class="loader"></div>
+            <h3 style="color: var(--primary); margin: 0;">กำลังประมวลผล...</h3>
+            <p style="color: var(--text-muted); font-size: 14px;">โปรดรอสักครู่ ห้ามปิดหน้าจอ</p>
+        </div>
     </div>
 
     <script>
-        // 🔴 1. ใส่ Web App URL ของ Google Apps Script ที่ได้จากการ Deploy 
+        // ==========================================
+        // 🔴 ตั้งค่า URL และ LIFF ID ที่นี่
+        // ==========================================
         const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxkHcKCsM853RD225LZ7wUnxnBZF1D5HoEXnJm7FaLBY8h12oppFDkYmERoQwoTs9cf6w/exec";
-        
-        // 🔴 2. ใส่ LIFF ID ของคุณ
-        const LIFF_ID = "2010379470-zXEdvOrD";
+        const LIFF_ID = "2010379470-zXEdvOrD2010379470-zXEdvOrD";
 
-        let currentUserId = "";
-        let currentUserName = "";
+        let currentUserId = "U_DEBUG_MODE";
+        let currentUserName = "ผู้ทดสอบระบบ";
 
-        // เริ่มต้นการทำงานของ LIFF เมื่อเปิดหน้าเว็บ
+        // เริ่มต้นการทำงาน
         window.onload = function() {
             initializeLiff();
         };
 
+        // ฟังก์ชันดึงข้อมูล LINE Profile
         async function initializeLiff() {
             try {
                 await liff.init({ liffId: LIFF_ID });
@@ -109,17 +331,22 @@
                     const profile = await liff.getProfile();
                     currentUserId = profile.userId;
                     currentUserName = profile.displayName;
+                    
+                    // อัปเดตหน้าจอ UI ให้แสดงรูปและชื่อจริง
+                    document.getElementById('profileName').innerText = currentUserName;
+                    if(profile.pictureUrl) {
+                        document.getElementById('profileImage').src = profile.pictureUrl;
+                    }
                 } else {
-                    // ถ้ารันในเบราว์เซอร์ปกติที่ไม่ได้ล็อกอิน LINE
                     liff.login();
                 }
             } catch (err) {
                 console.error("LIFF Init Error: ", err);
-                alert("ไม่สามารถเชื่อมต่อระบบ LINE ได้");
+                document.getElementById('profileName').innerText = "ใช้งานผ่านเว็บเบราว์เซอร์";
             }
         }
 
-        // ฟังก์ชันสลับ UI ของ Chip เลือกแนบไฟล์
+        // ฟังก์ชันสลับการแสดงผลกล่องแนบไฟล์ (Chip Toggle)
         function toggleFile(action) {
             const uploadSection = document.getElementById('uploadSection');
             const fileInput = document.getElementById('fileInput');
@@ -132,11 +359,11 @@
                 document.getElementById('chipNoFile').classList.add('active');
                 document.getElementById('chipHasFile').classList.remove('active');
                 uploadSection.style.display = 'none';
-                fileInput.value = ''; // ล้างค่าไฟล์ที่อาจจะเลือกไว้ทิ้ง
+                fileInput.value = ''; // ล้างค่าไฟล์ทิ้งเมื่อกดยกเลิก
             }
         }
 
-        // ฟังก์ชันแปลงไฟล์เป็น Base64
+        // ฟังก์ชันแปลงไฟล์เป็นข้อความ Base64
         function getBase64(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -146,14 +373,16 @@
             });
         }
 
-        // ฟังก์ชันส่งข้อมูล
+        // ฟังก์ชันส่งข้อมูลไปยัง Google Sheets และ Google Drive
         async function submitForm() {
-            // เช็คว่ากรอกข้อมูลครบไหม
-            if(!document.getElementById('hrForm').checkValidity()) {
-                alert("กรุณากรอกข้อมูลที่มีเครื่องหมาย * ให้ครบถ้วน");
+            const form = document.getElementById('hrForm');
+            if(!form.checkValidity()) {
+                alert("กรุณากรอกข้อมูลให้ครบถ้วนค่ะ");
+                form.reportValidity();
                 return;
             }
 
+            // เปิดหน้าจอ Loading
             document.getElementById('loading').style.display = 'flex';
             document.getElementById('submitBtn').disabled = true;
 
@@ -164,24 +393,21 @@
             let fileName = "";
             let fileMimeType = "";
 
-            // ถ้าเลือกแนบไฟล์และมีไฟล์ถูกเลือกจริง
+            // ตรวจสอบไฟล์ก่อนส่ง
             if (isAttach && fileInput.files.length > 0) {
                 const file = fileInput.files[0];
-                
-                // เช็คขนาดไฟล์ไม่ให้เกิน 5MB
                 if (file.size > 5 * 1024 * 1024) {
-                    alert("ขนาดไฟล์เกิน 5MB กรุณาเลือกไฟล์ใหม่ค่ะ");
+                    alert("❌ ขนาดไฟล์เกิน 5MB กรุณาเลือกไฟล์ที่เล็กลงค่ะ");
                     document.getElementById('loading').style.display = 'none';
                     document.getElementById('submitBtn').disabled = false;
                     return;
                 }
-
                 fileName = file.name;
                 fileMimeType = file.type;
                 fileBase64 = await getBase64(file);
             }
 
-            // จัดเตรียมข้อมูลสำหรับส่งไปให้ Apps Script
+            // เตรียมข้อมูลส่งออก
             const payload = {
                 action: "saveData",
                 data: {
@@ -190,32 +416,34 @@
                     issueDate: document.getElementById('issueDate').value,
                     expiryDate: document.getElementById('expiryDate').value,
                     alertDays: document.getElementById('alertDays').value,
-                    userId: currentUserId,         // 🌟 ส่ง UID
-                    userName: currentUserName,     // 🌟 ส่งชื่อพนักงาน
-                    fileBase64: fileBase64,        // 🌟 ส่งไฟล์ที่แปลงแล้ว
+                    userId: currentUserId,
+                    userName: currentUserName,
+                    fileBase64: fileBase64,
                     fileName: fileName,
                     fileMimeType: fileMimeType
                 }
             };
 
             try {
-                // ส่งข้อมูลผ่าน API
-                const response = await fetch(GAS_WEB_APP_URL, {
+                // ยิง API ไปหา Google Apps Script
+                await fetch(GAS_WEB_APP_URL, {
                     method: 'POST',
-                    // mode: 'no-cors' จะใช้เมื่อติดปัญหา CORS แต่จะอ่านค่า return ไม่ได้
-                    // แนะนำให้ Web App เซ็ตสิทธิ์เป็น "Anyone (ทุกคน)" เพื่อให้รับ POST ได้สมบูรณ์
                     body: JSON.stringify(payload)
                 });
 
+                // สำเร็จ -> แจ้งเตือนและปิดหน้าต่าง
                 document.getElementById('loading').style.display = 'none';
+                alert("✅ บันทึกข้อมูลและอัปโหลดไฟล์เรียบร้อยแล้วค่ะ");
                 
-                // แจ้งเตือนและปิดหน้าต่าง LIFF กลับไปที่แชท
-                alert("✅ บันทึกข้อมูลเรียบร้อยแล้วค่ะ!");
-                liff.closeWindow(); 
+                if (typeof liff !== 'undefined' && liff.isLoggedIn()) {
+                    liff.closeWindow(); 
+                } else {
+                    window.location.reload(); // รีเฟรชหน้าถ้าไม่ได้เปิดผ่าน LINE
+                }
 
             } catch (error) {
                 console.error("Error:", error);
-                alert("❌ เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง");
+                alert("❌ เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้งค่ะ");
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('submitBtn').disabled = false;
             }
@@ -223,6 +451,3 @@
     </script>
 </body>
 </html>
-     
-
-    
